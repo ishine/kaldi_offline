@@ -1,5 +1,3 @@
-# wav files in the correct format should be placed in /opt/aspire/audio. Filenames will be used as identifiers
-
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls -d /opt/aspire/audio/*.wav) > /opt/aspire/wav.scp && \
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') > /opt/aspire/utt2spk && \
 cd /opt/kaldi/egs/aspire/s5  && \
@@ -19,6 +17,5 @@ steps/nnet3/decode.sh --nj 4 --cmd 'run.pl' --config conf/decode.config \
   --frames-per-chunk 50 --skip-scoring true \
   --online-ivector-dir exp/nnet3/ivectors_eval2000 \
   exp/chain/tdnn_7b/graph_pp data/eval2000_hires \
-  exp/chain/tdnn_7b/decode_eval2000_pp_tg
-  
-  
+  exp/chain/tdnn_7b/decode_eval2000_pp_tg && \
+  for i in exp/chain/tdnn_7b/decode_eval2000_pp_tg/lat.*.gz; do lattice-best-path ark:"gunzip -c $(echo "$i") |" "ark,t:|int2sym.pl -f 2- exp/chain/tdnn_7b/graph_pp/words.txt > $(echo "$i" | sed -r "s/.+\/(.+)\.(.+)\.(.+)/\/opt\/aspire\/transcript\.\2\.txt/")"; done
