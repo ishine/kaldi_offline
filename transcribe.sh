@@ -1,3 +1,6 @@
+# wav files in the correct format should be placed in /opt/aspire/audio. Filenames will be used as identifiers
+
+
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls -d /opt/aspire/audio/*.wav) > /opt/aspire/wav.scp && \
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') > /opt/aspire/utt2spk && \
 cd /opt/kaldi/egs/aspire/s5  && \
