@@ -31,7 +31,7 @@ rm -rf exp/chain/tdnn_7b/decode_eval2000_pp_tg && \
 utils/copy_data_dir.sh /opt/aspire data/eval2000_hires && \
 cd /opt/kaldi/egs/wsj/s5 && \
 steps/segmentation/detect_speech_activity.sh \
-	--nj 1 \
+	--nj 4 \
 	--cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
    --extra-left-context 79 --extra-right-context 21 \
    --extra-left-context-initial 0 --extra-right-context-final 0 \
@@ -51,21 +51,21 @@ cp data/eval2000_hires_seg/segments data/eval2000_hires_seg_cmn/ && \
 utils/fix_data_dir.sh data/eval2000_hires_seg_cmn && \
 /opt/kaldi/egs/callhome_diarization/v1/diarization/nnet3/xvector/extract_xvectors.sh  \
 --cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
---nj 1 --window 1.5 --period 0.75 --apply-cmn false \
+--nj 4 --window 1.5 --period 0.75 --apply-cmn false \
 --min-segment 0.5 \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a \
 data/eval2000_hires_seg_cmn \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg && \
 /opt/kaldi/egs/callhome_diarization/v1/diarization/nnet3/xvector/score_plda.sh \
 --cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
---target-energy 0.9 --nj 1 \
+--target-energy 0.9 --nj 4 \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_callhome2 \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg/plda_scores && \
 cd /opt/kaldi/egs/callhome_diarization/v1/ && \
 /opt/kaldi/egs/callhome_diarization/v1/diarization/cluster.sh \
 --cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
---nj 1 \
+--nj 4 \
 --reco2num-spk /opt/aspire/reco2num_spk \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg/plda_scores \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg/plda_scores_num_speakers && \
