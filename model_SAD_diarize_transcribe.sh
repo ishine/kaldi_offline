@@ -1,23 +1,5 @@
 #### new model based diarization transcription - use rttm as starting point for transcription ###################
 
-cd /opt/kaldi/egs/callhome_diarization
-wget http://kaldi-asr.org/models/6/0006_callhome_diarization_v2_1a.tar.gz 
-tar xfv 0006_callhome_diarization_v2_1a.tar.gz
-
-
-cd /opt/kaldi/egs/callhome_diarization
-wget http://kaldi-asr.org/models/4/0004_tdnn_stats_asr_sad_1a.tar.gz 
-tar xfv 0004_tdnn_stats_asr_sad_1a.tar.gz 
-
-
-cd /opt &&
-rm -r /opt/aspire && \
-mkdir -p /opt/aspire/audio && \
-mkdir -p /opt/aspire/transcripts && \
-wget -O /opt/aspire/audio/samplefile1.wav https://raw.githubusercontent.com/suryavan11/kaldi_offline/master/samplefile.wav && \
-for i in {2..4}; do cp /opt/aspire/audio/samplefile1.wav "/opt/aspire/audio/samplefile$i.wav"; done
-
-
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls -d /opt/aspire/audio/*.wav) > /opt/aspire/wav.scp && \
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') > /opt/aspire/utt2spk && \
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls /opt/aspire/audio/*.wav | sed -e 's/.*/2/g' ) > /opt/aspire/reco2num_spk && \
