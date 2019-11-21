@@ -78,6 +78,8 @@ steps/nnet3/decode.sh --nj 4 --cmd 'run.pl' --config conf/decode.config \
   --beam 15 --lattice_beam 6 \
   --frames-per-chunk 50 --skip-scoring true \
   --online-ivector-dir exp/nnet3/ivectors_eval2000 \
-  exp/chain/tdnn_7b/graph_pp data/eval2000_hires_seg1 \
+  exp/tdnn_7b_chain_online/graph_pp \
+  data/eval2000_hires_seg1 \
   exp/chain/tdnn_7b/decode_eval2000_pp_tg && \
-  for i in exp/chain/tdnn_7b/decode_eval2000_pp_tg/lat.*.gz; do lattice-best-path ark:"gunzip -c $(echo "$i") |" "ark,t:|int2sym.pl -f 2- exp/chain/tdnn_7b/graph_pp/words.txt" | sed -r 's/\s+/|/' | awk -F'|' -v OFS='|' '{x=$1;y=gsub(/-/,"|",$1);print x,$1,$2}' > $(echo "$i" | sed -r "s/.+\/(.+)\.(.+)\.(.+)/\/opt\/aspire\/transcripts\/transcript\.\2\.txt/"); done
+  for i in exp/chain/tdnn_7b/decode_eval2000_pp_tg/lat.*.gz; do lattice-best-path ark:"gunzip -c $(echo "$i") |" "ark,t:|int2sym.pl -f 2- exp/tdnn_7b_chain_online/graph_pp/words.txt" | sed -r 's/\s+/|/' | awk -F'|' -v OFS='|' '{x=$1;y=gsub(/-/,"|",$1);print x,$1,$2}' > $(echo "$i" | sed -r "s/.+\/(.+)\.(.+)\.(.+)/\/opt\/aspire\/transcripts\/transcript\.\2\.txt/"); done
+  
