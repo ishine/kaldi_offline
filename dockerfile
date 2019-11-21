@@ -56,4 +56,6 @@ rm -rf 0004_tdnn_stats_asr_sad_1a.tar.gz
 
 COPY model_SAD_diarize_transcribe.sh /opt/
 
+RUN chmod +x /opt/model_SAD_diarize_transcribe.sh
+
 WORKDIR /opt
