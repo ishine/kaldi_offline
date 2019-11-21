@@ -41,6 +41,15 @@ RUN cd /opt/kaldi/egs/aspire/s5  && \
 wget http://dl.kaldi-asr.org/models/0001_aspire_chain_model.tar.gz && \
 tar xfv 0001_aspire_chain_model.tar.gz && \
 steps/online/nnet3/prepare_online_decoding.sh --mfcc-config conf/mfcc_hires.conf data/lang_chain exp/nnet3/extractor exp/chain/tdnn_7b exp/tdnn_7b_chain_online && \
-utils/mkgraph.sh --self-loop-scale 1.0 data/lang_pp_test exp/tdnn_7b_chain_online exp/tdnn_7b_chain_online/graph_pp
+utils/mkgraph.sh --self-loop-scale 1.0 data/lang_pp_test exp/tdnn_7b_chain_online exp/tdnn_7b_chain_online/graph_pp && \
+rm -rf 0001_aspire_chain_model.tar.gz && \
+cd /opt/kaldi/egs/callhome_diarization && \
+wget http://kaldi-asr.org/models/6/0006_callhome_diarization_v2_1a.tar.gz && \
+tar xfv 0006_callhome_diarization_v2_1a.tar.gz && \
+rm -rf 0006_callhome_diarization_v2_1a.tar.gz && \
+cd /opt/kaldi/egs/callhome_diarization && \
+wget http://kaldi-asr.org/models/4/0004_tdnn_stats_asr_sad_1a.tar.gz && \
+tar xfv 0004_tdnn_stats_asr_sad_1a.tar.gz && \
+rm -rf 0004_tdnn_stats_asr_sad_1a.tar.gz
 
-WORKDIR /opt/kaldi/
+WORKDIR /opt
