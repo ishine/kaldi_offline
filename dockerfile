@@ -54,4 +54,6 @@ wget http://kaldi-asr.org/models/4/0004_tdnn_stats_asr_sad_1a.tar.gz && \
 tar xfv 0004_tdnn_stats_asr_sad_1a.tar.gz && \
 rm -rf 0004_tdnn_stats_asr_sad_1a.tar.gz
 
+COPY model_SAD_diarize_transcribe.sh /opt/
+
 WORKDIR /opt
