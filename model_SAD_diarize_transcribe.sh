@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #### new model based diarization transcription - use rttm as starting point for transcription ###################
 
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls -d /opt/aspire/audio/*.wav) > /opt/aspire/wav.scp && \
