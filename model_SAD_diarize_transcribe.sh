@@ -1,22 +1,6 @@
+#!/bin/bash
+
 #### new model based diarization transcription - use rttm as starting point for transcription ###################
-
-cd /opt/kaldi/egs/callhome_diarization
-wget http://kaldi-asr.org/models/6/0006_callhome_diarization_v2_1a.tar.gz 
-tar xfv 0006_callhome_diarization_v2_1a.tar.gz
-
-
-cd /opt/kaldi/egs/callhome_diarization
-wget http://kaldi-asr.org/models/4/0004_tdnn_stats_asr_sad_1a.tar.gz 
-tar xfv 0004_tdnn_stats_asr_sad_1a.tar.gz 
-
-
-cd /opt &&
-rm -r /opt/aspire && \
-mkdir -p /opt/aspire/audio && \
-mkdir -p /opt/aspire/transcripts && \
-wget -O /opt/aspire/audio/samplefile1.wav https://raw.githubusercontent.com/suryavan11/kaldi_offline/master/samplefile.wav && \
-for i in {2..4}; do cp /opt/aspire/audio/samplefile1.wav "/opt/aspire/audio/samplefile$i.wav"; done
-
 
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls -d /opt/aspire/audio/*.wav) > /opt/aspire/wav.scp && \
 paste <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') <(ls /opt/aspire/audio/*.wav | xargs -n 1 basename | sed -e 's/\.wav$//') > /opt/aspire/utt2spk && \
@@ -31,7 +15,7 @@ rm -rf exp/chain/tdnn_7b/decode_eval2000_pp_tg && \
 utils/copy_data_dir.sh /opt/aspire data/eval2000_hires && \
 cd /opt/kaldi/egs/wsj/s5 && \
 steps/segmentation/detect_speech_activity.sh \
-	--nj 1 \
+	--nj 4 \
 	--cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
    --extra-left-context 79 --extra-right-context 21 \
    --extra-left-context-initial 0 --extra-right-context-final 0 \
@@ -51,21 +35,21 @@ cp data/eval2000_hires_seg/segments data/eval2000_hires_seg_cmn/ && \
 utils/fix_data_dir.sh data/eval2000_hires_seg_cmn && \
 /opt/kaldi/egs/callhome_diarization/v1/diarization/nnet3/xvector/extract_xvectors.sh  \
 --cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
---nj 1 --window 1.5 --period 0.75 --apply-cmn false \
+--nj 4 --window 1.5 --period 0.75 --apply-cmn false \
 --min-segment 0.5 \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a \
 data/eval2000_hires_seg_cmn \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg && \
 /opt/kaldi/egs/callhome_diarization/v1/diarization/nnet3/xvector/score_plda.sh \
 --cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
---target-energy 0.9 --nj 1 \
+--target-energy 0.9 --nj 4 \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_callhome2 \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg/plda_scores && \
 cd /opt/kaldi/egs/callhome_diarization/v1/ && \
 /opt/kaldi/egs/callhome_diarization/v1/diarization/cluster.sh \
 --cmd "/opt/kaldi/egs/wsj/s5/utils/run.pl" \
---nj 1 \
+--nj 4 \
 --reco2num-spk /opt/aspire/reco2num_spk \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg/plda_scores \
 /opt/kaldi/egs/callhome_diarization/0006_callhome_diarization_v2_1a/exp/xvector_nnet_1a/xvectors_eval2000_hires_seg/plda_scores_num_speakers && \
@@ -94,6 +78,8 @@ steps/nnet3/decode.sh --nj 4 --cmd 'run.pl' --config conf/decode.config \
   --beam 15 --lattice_beam 6 \
   --frames-per-chunk 50 --skip-scoring true \
   --online-ivector-dir exp/nnet3/ivectors_eval2000 \
-  exp/chain/tdnn_7b/graph_pp data/eval2000_hires_seg1 \
+  exp/tdnn_7b_chain_online/graph_pp \
+  data/eval2000_hires_seg1 \
   exp/chain/tdnn_7b/decode_eval2000_pp_tg && \
-  for i in exp/chain/tdnn_7b/decode_eval2000_pp_tg/lat.*.gz; do lattice-best-path ark:"gunzip -c $(echo "$i") |" "ark,t:|int2sym.pl -f 2- exp/chain/tdnn_7b/graph_pp/words.txt > $(echo "$i" | sed -r "s/.+\/(.+)\.(.+)\.(.+)/\/opt\/aspire\/transcripts\/transcript\.\2\.txt/")"; done
+  for i in exp/chain/tdnn_7b/decode_eval2000_pp_tg/lat.*.gz; do lattice-best-path ark:"gunzip -c $(echo "$i") |" "ark,t:|int2sym.pl -f 2- exp/tdnn_7b_chain_online/graph_pp/words.txt" | sed -r 's/\s+/|/' | awk -F'|' -v OFS='|' '{x=$1;y=gsub(/-/,"|",$1);print x,$1,$2}' > $(echo "$i" | sed -r "s/.+\/(.+)\.(.+)\.(.+)/\/opt\/aspire\/transcripts\/transcript\.\2\.txt/"); done
+  
