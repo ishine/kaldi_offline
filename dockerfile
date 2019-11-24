@@ -23,9 +23,10 @@ RUN apt-get update && \
         ffmpeg \
         nano \
 	vim && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN ln -s /usr/bin/python2.7 /usr/bin/python 
+    apt-get clean autoclean && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    ln -s /usr/bin/python2.7 /usr/bin/python 
 
 RUN git clone --depth 1 https://github.com/kaldi-asr/kaldi.git /opt/kaldi && \
     cd /opt/kaldi && \
@@ -36,6 +37,11 @@ RUN git clone --depth 1 https://github.com/kaldi-asr/kaldi.git /opt/kaldi && \
     ./configure --shared && \
     make depend -j $(nproc) && \
     make -j $(nproc)
+    
+RUN rm -rf /opt/kaldi/.git && \
+    rm -rf /opt/kaldi/egs/ /opt/kaldi/windows/ /opt/kaldi/misc/ && \
+    find /opt/kaldi/src/ -type f -not -name '*.so' -delete && \
+    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' \) -delete
 
 RUN cd /opt/kaldi/egs/aspire/s5  && \
 wget http://dl.kaldi-asr.org/models/0001_aspire_chain_model.tar.gz && \
