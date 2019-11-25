@@ -37,13 +37,7 @@ RUN git clone --depth 1 https://github.com/kaldi-asr/kaldi.git /opt/kaldi && \
     ./configure --shared && \
     make depend -j $(nproc) && \
     make -j $(nproc)
-    
-RUN rm -rf /opt/kaldi/.git && \
-    rm -rf /opt/kaldi/windows/ /opt/kaldi/misc/ && \
-    find /opt/kaldi/egs/ -maxdepth 1 ! -name wsj ! -name aspire ! -name callhome_diarization ! -wholename /opt/kaldi/egs/ | xargs rm -rf && \ 
-    find /opt/kaldi/src/ -type f -not -name '*.so' -delete && \
-    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' \) -delete
-    
+     
 RUN cd /opt/kaldi/egs/aspire/s5  && \
 wget http://dl.kaldi-asr.org/models/0001_aspire_chain_model.tar.gz && \
 tar xfv 0001_aspire_chain_model.tar.gz && \
@@ -61,6 +55,12 @@ wget http://kaldi-asr.org/models/4/0004_tdnn_stats_asr_sad_1a.tar.gz && \
 tar xfv 0004_tdnn_stats_asr_sad_1a.tar.gz && \
 rm -rf 0004_tdnn_stats_asr_sad_1a.tar.gz
 
+RUN rm -rf /opt/kaldi/.git && \
+    rm -rf /opt/kaldi/windows/ /opt/kaldi/misc/ && \
+    find /opt/kaldi/egs/ -maxdepth 1 ! -name wsj ! -name aspire ! -name callhome_diarization ! -wholename /opt/kaldi/egs/ | xargs rm -rf && \ 
+    find /opt/kaldi/src/ -type f -not -name '*.so' -delete && \
+    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' \) -delete
+    
 COPY model_SAD_diarize_transcribe.sh /opt/
 
 RUN chmod +x /opt/model_SAD_diarize_transcribe.sh
