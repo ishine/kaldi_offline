@@ -38,4 +38,10 @@ RUN git clone --depth 1 https://github.com/kaldi-asr/kaldi.git /opt/kaldi && \
     make depend -j $(nproc) && \
     make -j $(nproc)
     
+RUN rm -rf /opt/kaldi/.git && \
+    rm -rf /opt/kaldi/windows/ /opt/kaldi/misc/ && \
+    find /opt/kaldi/egs/ -maxdepth 1 ! -name aspire ! -name callhome_diarization ! -wholename /opt/kaldi/egs/ | xargs rm -rf && \ 
+    find /opt/kaldi/src/ -type f -not -name '*.so' -delete && \
+    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' \) -delete
+    
 WORKDIR /opt
