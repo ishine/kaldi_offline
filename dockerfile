@@ -58,8 +58,8 @@ rm -rf 0004_tdnn_stats_asr_sad_1a.tar.gz
 RUN rm -rf /opt/kaldi/.git && \
     rm -rf /opt/kaldi/windows/ /opt/kaldi/misc/ && \
     find /opt/kaldi/egs/ -maxdepth 1 ! -name wsj ! -name aspire ! -name callhome_diarization ! -wholename /opt/kaldi/egs/ | xargs rm -rf && \ 
-    find /opt/kaldi/src/ -type f \( -not -name '*.so' -and -not -name '*.sh' \) -delete && \
-    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' -and -not -name '*.sh' \) -delete
+    find /opt/kaldi/src/ -type f \( -not -name '*.so' -and -not -name '*.sh' -and -not -perm -111 \) -delete && \
+    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' -and -not -name '*.sh' -and -not -perm -111 \) -delete
     
 COPY model_SAD_diarize_transcribe.sh /opt/
 
