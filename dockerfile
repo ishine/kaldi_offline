@@ -38,4 +38,4 @@ RUN git clone --depth 1 https://github.com/kaldi-asr/kaldi.git /opt/kaldi && \
     make depend -j $(nproc) && \
     make -j $(nproc)
     
-
+WORKDIR /opt
