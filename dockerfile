@@ -59,7 +59,7 @@ RUN rm -rf /opt/kaldi/.git && \
     rm -rf /opt/kaldi/windows/ /opt/kaldi/misc/ && \
     find /opt/kaldi/egs/ -maxdepth 1 ! -name wsj ! -name aspire ! -name callhome_diarization ! -wholename /opt/kaldi/egs/ | xargs rm -rf && \ 
     find /opt/kaldi/src/ -type f -not -name '*.so' -delete && \
-    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' \) -delete
+    find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' -and -not -name '*.sh' \) -delete
     
 COPY model_SAD_diarize_transcribe.sh /opt/
 
