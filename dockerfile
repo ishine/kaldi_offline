@@ -43,7 +43,8 @@ RUN rm -rf /opt/kaldi/.git && \
     find /opt/kaldi/src/ -type f -not -name '*.so' -delete && \
     find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' \) -delete
 
-RUN cd /opt/kaldi/egs/aspire/s5  && \
+RUN mkdir -p /opt/kaldi/egs/aspire/s5 && \
+cd /opt/kaldi/egs/aspire/s5  && \
 wget http://dl.kaldi-asr.org/models/0001_aspire_chain_model.tar.gz && \
 tar xfv 0001_aspire_chain_model.tar.gz && \
 steps/online/nnet3/prepare_online_decoding.sh --mfcc-config conf/mfcc_hires.conf data/lang_chain exp/nnet3/extractor exp/chain/tdnn_7b exp/tdnn_7b_chain_online && \
