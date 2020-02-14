@@ -61,8 +61,9 @@ RUN rm -rf /opt/kaldi/.git && \
     find /opt/kaldi/src/ -type f \( -not -name '*.so' -and -not -name '*.sh' -and -not -perm -111 \) -delete && \
     find /opt/kaldi/tools/ -type f \( -not -name '*.so' -and -not -name '*.so*' -and -not -name '*.sh' -and -not -perm -111 \) -delete
     
-COPY model_SAD_diarize_transcribe.sh /opt/
+COPY model_SAD_diarize_transcribe.sh model_SAD_diarize_transcribe_v2.sh /opt/
 
-RUN chmod +x /opt/model_SAD_diarize_transcribe.sh
+RUN chmod +x /opt/model_SAD_diarize_transcribe.sh && \
+    chmod +x /opt/model_SAD_diarize_transcribe_v2.sh
 
 WORKDIR /opt
